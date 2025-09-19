@@ -1,38 +1,45 @@
-name: CI - COSC1209
+# Prof's Gradle CI, updated for 2025 runners + lab echo
+name: Java CI with Gradle
 
 on:
   push:
+    branches: [ master, main ]   # supports either default branch
   pull_request:
+    branches: [ master, main ]
 
 jobs:
-  build:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
+  build-java:
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Print message
+      - name: Print class message  # <- lab requirement
         run: echo "Hi, I am from COSC 1209 class"
 
-      - name: Set up Java (Temurin)
+      - name: Set up JDK 11 (Temurin)
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '11'   # change if your build.gradle needs 11 or 17
+          java-version: '11'
           cache: gradle
 
-      - name: Make Gradle wrapper executable (Linux/macOS)
-        if: runner.os != 'Windows'
+      - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Build on Windows
-        if: runner.os == 'Windows'
-        run: .\gradlew.bat build
-
-      - name: Build on Linux/macOS
-        if: runner.os != 'Windows'
+      - name: Build with Gradle
         run: ./gradlew build
+
+      # ---- Docker build & push to Docker Hub (optional but in prof's file) ----
+      # Requires: a Dockerfile at repo root, and two repo secrets:
+      #   DOCKER_USERNAME and DOCKER_PASSWORD (Docker Hub credentials)
+      - name: Build and Push Docker Image
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        uses: mr-smithers-excellent/docker-build-push@v6
+        with:
+          image: <your-dockerhub-username>/cicdrunner    # <-- change this
+          tags: latest
+          registry: docker.io
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
