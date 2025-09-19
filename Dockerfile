@@ -1,8 +1,10 @@
-FROM openjdk:8-jre-alpine
+# Use the same Java version as your workflow
+FROM eclipse-temurin:11-jre-alpine
+
+WORKDIR /app
+
+# Copy "whatever jar was built" to /app/app.jar
+COPY build/libs/*.jar /app/app.jar
 
 EXPOSE 8080
-
-COPY ./build/libs/my-app-1.0-SNAPSHOT.jar /usr/app/
-WORKDIR /usr/app
-
-ENTRYPOINT ["java", "-jar", "my-app-1.0-SNAPSHOT.jar"]
+ENTRYPOINT ["java","-jar","/app/app.jar"]
