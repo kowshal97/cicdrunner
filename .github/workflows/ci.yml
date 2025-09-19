@@ -22,7 +22,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '8'   # change if your build.gradle needs 11 or 17
+          java-version: '11'   # change if your build.gradle needs 11 or 17
           cache: gradle
 
       - name: Make Gradle wrapper executable (Linux/macOS)
