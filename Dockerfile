@@ -1,9 +1,8 @@
-# Use the same Java version as your workflow
 FROM eclipse-temurin:11-jre-alpine
 
 WORKDIR /app
 
-# Copy "whatever jar was built" to /app/app.jar
+# copy the jar that Gradle actually built (whatever its name is)
 COPY build/libs/*.jar /app/app.jar
 
 EXPOSE 8080
